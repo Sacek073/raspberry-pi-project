@@ -3,7 +3,7 @@ import paho.mqtt.client as mqtt
 # MQTT broker config
 broker_address = "localhost"
 port = 1883
-topic = "your/topic"
+topic = "weather_info"
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with code: " + str(rc))
