@@ -79,17 +79,24 @@ int main() {
     // TODO probablyload from some config file
     const char* mqtt_host = "172.21.64.213"; // MQTT broker ip
     int mqtt_port = 1883; // MQTT broker port
+    const char* topic = "weather_info";
 
     MyMqttClient mqtt_client("client_id", mqtt_host, mqtt_port);
 
     while (1) {
-
-        const char* topic = "weather_info";
-
         const char* message = prepare_payload();
-
         mqtt_client.send_message(topic, message);
-        sleep(60*10); // Once in ten minutes
+
+        // We need to free the message
+        // If we want to store the messages we need to free it elswhere
+        // Something like:
+        // if message is sent:
+        //     free(message)
+        // else:
+        //     queue.append(message)
+
+        free((void*)message);
+        sleep(10); // Once in ten minutes
     }
 
     return 0;
