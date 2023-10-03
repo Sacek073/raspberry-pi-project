@@ -22,3 +22,8 @@
 ## Extensions
 - Use the LED display
 - OpenWeatherMaps -> public free API for current weather, also uses `.json` with same structure as we purposed.
+
+## Data Format
+multiple formats with their own standards but no standard which format to use ([Source](https://climatedataguide.ucar.edu/climate-tools/common-climate-data-formats-overview))
+- HDF and NetCDF (file formats)
+- GRIB (record format)
