@@ -83,7 +83,19 @@ class Downloader:
         Creates the master json
         """
         with open(os.path.join(self.folder, self.json_file), "w") as f:
-            f.write("{}")
+            devices = []
+            data = {"devices": devices}
+            json.dump(data, f)
+
+
+    def createJsonEntry(self, data: json) -> json:
+        """
+        Creates the json entry for the data
+        """
+        del data["device"]
+        print(data)
+        return data
+
 
 
     def storeToFile(self, data: str) -> None:
@@ -93,7 +105,37 @@ class Downloader:
         if yes, we need o append the data, if not, we need to create new entry
         """
         json_data = json.loads(data)
-        # TODO
+        name = json_data["device"]
+        with open(os.path.join(self.folder, self.json_file), "r") as infile:
+            try:
+                master_json = json.load(infile)
+            # TODO maybe this is not the best way
+            except json.decoder.JSONDecodeError:
+                master_json = {}
+
+
+            entry = self.createJsonEntry(json_data)
+
+            found = False
+            for device in master_json["devices"]:
+                if device["name"] == name:
+                    device["values"].append(entry)
+                    found = True
+                    break
+
+            if (master_json["devices"] == []) or (found == False):
+                new = {
+                    "name": name,
+                    "values":[entry]
+                }
+                master_json["devices"].append(new)
+
+
+
+            # write chages to the file
+            with open(os.path.join(self.folder, self.json_file), "w") as f:
+                    json.dump(master_json, f)
+
 
 
 class Config:
