@@ -1,0 +1,68 @@
+from flask import Flask, render_template, request
+import json
+
+def get_rpi_names():
+    with open("../data/data.json", "r") as f:
+        data = json.load(f)
+        rpis = []
+        for rpi in data["devices"]:
+            rpis.append(rpi["name"])
+        return rpis
+
+app = Flask(__name__, template_folder='./templates', static_folder='./static')
+devices = get_rpi_names()
+
+def get_values(data, type):
+    """
+    Returns a list of temperatures from the data
+    Args:
+    data -- the data for specific device from master json
+    type -- string, 'temperature', 'humidity', 'air_pressure'
+    """
+    temperatures = {}
+    for item in data:
+        timestamp = item["timestamp"]
+        temp = item["data"][type]
+        temperatures[timestamp] = temp
+    return temperatures
+
+@app.route('/')
+def index():
+    """
+    Show the index page
+    """
+    return render_template('index.html', devices=devices)
+
+@app.route('/device', methods=['POST'])
+def process_form():
+    """
+    Processes data from the form in tha navigation bar
+    and displays the graph for the selected device
+    """
+    selected_device = request.form.get('selected_device')
+    current_data = []
+    with open("../data/data.json", "r") as f:
+        data = json.load(f)
+        for rpi in data["devices"]:
+            if rpi["name"] == selected_device:
+                current_data = rpi["values"]
+
+
+    return render_template('device.html',
+                           device=selected_device,
+                           devices=devices, # for the navigation bar from global variable
+                           temperature=get_values(current_data, "temperature"),
+                           humidity=get_values(current_data, "humidity"),
+                           pressure=get_values(current_data, "air_pressure")
+                           )
+
+@app.route('/device', methods=['GET'])
+def device():
+    """
+    Just to return to index.html, if user uses GET on /device
+    """
+    return index()
+
+if __name__=='__main__':
+    # app.run(debug = True)
+    app.run()
