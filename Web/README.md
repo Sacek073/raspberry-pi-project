@@ -1,7 +1,14 @@
 - Receiver:
-pip install paho-mqtt
+`pip install paho-mqtt`
+- Webpage:
+    ```
+pip install flask
+pip install pandas
+pip install python-dateutil
+pip install plotly
+    ```
 - MQTT broker
-sudo apt install mosquitto mosquitto-clients
+`sudo apt install mosquitto mosquitto-clients`
 - MQTT config:
 ```
 pid_file /run/mosquitto/mosquitto.pid

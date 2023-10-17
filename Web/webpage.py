@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request
 import json
+import plotly.graph_objs as go
+from dateutil import parser
 
 def get_rpi_names():
     with open("../data/data.json", "r") as f:
@@ -33,6 +35,20 @@ def index():
     """
     return render_template('index.html', devices=devices)
 
+
+def prepare_plot(data, y_axis):
+    """
+    Function prepare a plot for iven data (already selcetd temeparure, humidity or pressure)"""
+    dates = list(data.keys())
+    date_objects = [parser.parse(date_str) for date_str in dates]
+    values = [float(val) for val in data.values()]
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=date_objects, y=values, mode='lines+markers', name=y_axis))
+    fig.update_xaxes(title_text='Time')
+    fig.update_yaxes(title_text=y_axis)
+    return fig.to_html()
+
 @app.route('/device', methods=['POST'])
 def process_form():
     """
@@ -47,14 +63,21 @@ def process_form():
             if rpi["name"] == selected_device:
                 current_data = rpi["values"]
 
+    temp_plot = prepare_plot(get_values(current_data, "temperature"), "Temperature (°C)")
+    humidity_plot = prepare_plot(get_values(current_data, "humidity"), "Humidity (%)")
+    pressure_plot = prepare_plot(get_values(current_data, "air_pressure"), "Air pressure (Pa)")
 
     return render_template('device.html',
                            device=selected_device,
                            devices=devices, # for the navigation bar from global variable
-                           temperature=get_values(current_data, "temperature"),
-                           humidity=get_values(current_data, "humidity"),
-                           pressure=get_values(current_data, "air_pressure")
+                           temperature=temp_plot,
+                           humidity=humidity_plot,
+                           pressure=pressure_plot
                            )
+
+
+
+
 
 @app.route('/device', methods=['GET'])
 def device():
