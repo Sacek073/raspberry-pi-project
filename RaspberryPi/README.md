@@ -8,5 +8,5 @@ sudo apt-get install nlohmann-json3-dev
 ```
 
 ## Compilation
-`g++ -o mqtt_example mqtt_example.cpp -lmosquittopp`
+`g++ -o sender sender.cpp -lmosquittopp`
 

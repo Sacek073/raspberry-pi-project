@@ -39,6 +39,7 @@ def index():
 def prepare_plot(data, y_axis):
     """
     Function prepare a plot for iven data (already selcetd temeparure, humidity or pressure)"""
+    data = dict(sorted(data.items(), key=lambda item: item[0]))
     dates = list(data.keys())
     date_objects = [parser.parse(date_str) for date_str in dates]
     values = [float(val) for val in data.values()]
