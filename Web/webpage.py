@@ -33,6 +33,8 @@ def index():
     """
     Show the index page
     """
+    if len(devices) == 1:
+        return process_form(devices[0])
     return render_template('index.html', devices=devices)
 
 
@@ -51,12 +53,15 @@ def prepare_plot(data, y_axis):
     return fig.to_html()
 
 @app.route('/device', methods=['POST'])
-def process_form():
+def process_form(opt_arg=None):
     """
     Processes data from the form in tha navigation bar
     and displays the graph for the selected device
     """
-    selected_device = request.form.get('selected_device')
+    if opt_arg is None:
+        selected_device = request.form.get('selected_device')
+    else:
+        selected_device = opt_arg
     current_data = []
     with open("../data/data.json", "r") as f:
         data = json.load(f)
