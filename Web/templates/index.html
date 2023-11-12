@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}The Weather App{% endblock title %}</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/main.css') }}">
+    </head>
+    <body>
+        <header>
+            <form action="/device" method="post">
+                <label for="devices">Choose your device:</label>
+                <select id="devices" name="selected_device">
+                    {% for device in devices %}
+                        <option value="{{ device }}">{{ device }}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="Submit">
+            </form>
+        </header>
+        <main>
+        {% block content %}
+        <p>Plese select the device in the form above.</p>
+        {% endblock content %}
+        </main>
+    </body>
+</html>

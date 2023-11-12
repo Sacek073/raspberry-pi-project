@@ -113,7 +113,6 @@ class Downloader:
             except json.decoder.JSONDecodeError:
                 master_json = {}
 
-
             entry = self.createJsonEntry(json_data)
 
             found = False
@@ -129,8 +128,6 @@ class Downloader:
                     "values":[entry]
                 }
                 master_json["devices"].append(new)
-
-
 
             # write chages to the file
             with open(os.path.join(self.folder, self.json_file), "w") as f:

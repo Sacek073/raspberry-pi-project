@@ -1,0 +1,10 @@
+{% extends "index.html" %}
+{% block title %}Weather for: {{device}}{% endblock %}
+{% block content %}
+    <h1>Temperatures:</h1>
+    {{ temperature | safe }}
+    <h1>Air-pressure:</h1>
+    {{ pressure | safe }}
+    <h1>Humidity:</h1>
+    {{ humidity | safe }}
+{% endblock %}

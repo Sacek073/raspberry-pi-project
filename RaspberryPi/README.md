@@ -23,5 +23,5 @@ dtoverlay=rpi-sense
 save and reboot RPi
 
 ## Compilation
-`g++ -o mqtt_example mqtt_example.cpp -lmosquittopp`
+`g++ -o sender sender.cpp -lmosquittopp`
 
