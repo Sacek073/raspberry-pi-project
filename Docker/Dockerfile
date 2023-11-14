@@ -8,10 +8,6 @@ RUN apk add py3-pandas
 
 RUN apk add py3-dateutil
 
-RUN apk add mosquitto mosquitto-clients
-
-EXPOSE 1883
-
 EXPOSE 5000
 
 WORKDIR /app
