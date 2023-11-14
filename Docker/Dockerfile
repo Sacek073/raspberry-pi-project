@@ -14,6 +14,8 @@ WORKDIR /app
 
 COPY ./Web/ /app/Web
 
+COPY ./data/ /data
+
 COPY ./start.sh /app/
 
 RUN chmod +x ./start.sh

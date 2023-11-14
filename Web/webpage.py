@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request
 import json
 import plotly.graph_objs as go
+import threading
+import sys
+import receiver
+
 from dateutil import parser
 
 def get_rpi_names():
@@ -82,6 +86,8 @@ def process_form(opt_arg=None):
                            )
 
 
+def webpage():
+    app.run(host='0.0.0.0')
 
 
 
@@ -94,4 +100,13 @@ def device():
 
 if __name__=='__main__':
     # app.run(debug = True)
-    app.run(host='0.0.0.0')
+
+    # app.run(host='0.0.0.0')
+    thread1 = threading.Thread(target=receiver.receive)
+    thread2 = threading.Thread(target=webpage)
+
+    thread1.start()
+    thread2.start()
+
+    thread1.join()
+    thread2.join()
