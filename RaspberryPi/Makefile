@@ -1,6 +1,6 @@
 all:
-	g++ -o mqtt_example test.cpp -lmosquittopp
+		g++ -o weatherstation weatherstation.cpp -lmosquittopp
 run:
-	./mqtt_example
+		./weatherstation
 clean:
-	rm mqtt_example
+		rm weatherstation
