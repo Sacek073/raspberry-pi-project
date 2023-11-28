@@ -13,17 +13,8 @@
 ## Setting up the MQTT broker
 - Installation:
 `sudo apt install mosquitto mosquitto-clients`
-- MQTT config (/etc/mosquitto/mosquitto.conf) - change the contnent of the file to:
+- MQTT config (/etc/mosquitto/mosquitto.conf or C:/Program Files/mosquitto/mosquitto.conf) - add the following lines to the config file:
 ```
-pid_file /run/mosquitto/mosquitto.pid
-
-persistence true
-persistence_location /var/lib/mosquitto/
-
-log_dest file /var/log/mosquitto/mosquitto.log
-
-include_dir /etc/mosquitto/conf.d
-
 listener 1883
 
 allow_anonymous true
