@@ -1,3 +1,10 @@
+# Info
+This folder contains the web application which is used to display the data from the MQTT broker and the receiver.
+
+## How to use
+In order to run the web application and the receiver, please go to the Docker folder and follow the instructions there.
+
+### The following part was used in time, when we did not used Docker and runned the app by the modules itself. It is not used anymore, but it is still here for reference.
 - Receiver:
 `pip install paho-mqtt`
 - Webpage:
