@@ -2,4 +2,4 @@
 
 cd Web
 
-python3 Web/webpage.py
+python3 webpage.py
