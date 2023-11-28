@@ -18,8 +18,4 @@ COPY ./ip.txt /app/
 
 COPY ./data/ /app/data
 
-COPY ./start.sh /app/
-
-RUN chmod +x ./start.sh
-
-CMD ["sh", "./start.sh"]
+CMD ["python3", "/app/Web/webpage.py"]
