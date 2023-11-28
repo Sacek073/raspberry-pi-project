@@ -14,6 +14,8 @@ WORKDIR /app
 
 COPY ./Web/ /app/Web
 
+COPY ./ip.txt /app/
+
 COPY ./data/ /app/data
 
 COPY ./start.sh /app/
