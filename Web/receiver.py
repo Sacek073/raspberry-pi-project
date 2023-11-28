@@ -141,7 +141,7 @@ class Config:
     We can load it from file
     """
     def __init__(self,
-                 broker_ip="localhost",
+                 broker_ip="172.21.64.213",
                  port=1883,
                  topic="weather_info",
                  download_folder=os.path.join(os.getcwd(), "..", "data"),
@@ -153,8 +153,11 @@ class Config:
         self.json_file = json_file
 
 
-if __name__ == "__main__":
-    config = Config()
+def receive():
+    print("Reciever running")
+    with open("/app/ip.txt", "r") as f:
+        ip = f.read().strip()
+    config = Config(broker_ip=ip)
 
     downloader = Downloader(config.download_folder, config.json_file)
 

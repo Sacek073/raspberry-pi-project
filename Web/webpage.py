@@ -1,10 +1,14 @@
 from flask import Flask, render_template, request
 import json
 import plotly.graph_objs as go
+import threading
+import sys
+import receiver
+
 from dateutil import parser
 
 def get_rpi_names():
-    with open("../data/data.json", "r") as f:
+    with open("/app/data/data.json", "r") as f:
         data = json.load(f)
         rpis = []
         for rpi in data["devices"]:
@@ -12,7 +16,6 @@ def get_rpi_names():
         return rpis
 
 app = Flask(__name__, template_folder='./templates', static_folder='./static')
-devices = get_rpi_names()
 
 def get_values(data, type):
     """
@@ -33,6 +36,7 @@ def index():
     """
     Show the index page
     """
+    devices = get_rpi_names()
     if len(devices) == 1:
         return process_form(devices[0])
     return render_template('index.html', devices=devices)
@@ -63,7 +67,7 @@ def process_form(opt_arg=None):
     else:
         selected_device = opt_arg
     current_data = []
-    with open("../data/data.json", "r") as f:
+    with open("/app/data/data.json", "r") as f:
         data = json.load(f)
         for rpi in data["devices"]:
             if rpi["name"] == selected_device:
@@ -75,13 +79,15 @@ def process_form(opt_arg=None):
 
     return render_template('device.html',
                            device=selected_device,
-                           devices=devices, # for the navigation bar from global variable
+                           devices=get_rpi_names(), # for the navigation bar from global variable
                            temperature=temp_plot,
                            humidity=humidity_plot,
                            pressure=pressure_plot
                            )
 
 
+def webpage():
+    app.run(host='0.0.0.0')
 
 
 
@@ -94,4 +100,13 @@ def device():
 
 if __name__=='__main__':
     # app.run(debug = True)
-    app.run()
+
+    # app.run(host='0.0.0.0')
+    thread1 = threading.Thread(target=receiver.receive)
+    thread2 = threading.Thread(target=webpage)
+
+    thread1.start()
+    thread2.start()
+
+    thread1.join()
+    thread2.join()
