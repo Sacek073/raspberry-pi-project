@@ -25,3 +25,6 @@ save and reboot RPi
 ## Compilation
 `g++ -o sender sender.cpp -lmosquittopp`
 
+## To run the sender:
+Run `./sender` after compilation
+
