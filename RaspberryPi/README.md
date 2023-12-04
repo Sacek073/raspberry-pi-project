@@ -40,5 +40,4 @@ dtoverlay=rpi-sense
 save and reboot RPi
 
 ## Compilation
-`g++ -o mqtt_example mqtt_example.cpp -lmosquittopp`
 `g++ -o out/weatherstation src/weatherstation.cpp -I/include/RTIMULib/ -lmosquittopp -lRTIMULib`

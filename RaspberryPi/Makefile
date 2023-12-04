@@ -1,6 +1,6 @@
 all:
-		g++ -o weatherstation weatherstation.cpp -lmosquittopp
+		g++ -o out/weatherstation src/weatherstation.cpp -I/include/RTIMULib/ -lmosquittopp -lRTIMULib
 run:
-		./weatherstation
+		./out/weatherstation
 clean:
-		rm weatherstation
+		rm /out/weatherstation

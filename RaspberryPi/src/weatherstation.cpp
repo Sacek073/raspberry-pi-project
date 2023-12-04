@@ -9,6 +9,11 @@
 
 using json = nlohmann::json;
 
+RTIMUSettings *settings = NULL;
+RTIMU *imu = NULL;
+RTPressure *pressure = NULL;
+RTHumidity *humidity = NULL;
+
 class MyMqttClient : public mosqpp::mosquittopp {
 public:
     MyMqttClient(const char* id, const char* host, int port) : mosqpp::mosquittopp(id) {
@@ -44,42 +49,55 @@ public:
     }
 };
 
-float readAirPressure() {
-    RTIMUSettings *settings = new RTIMUSettings("RTIMULib");
-    RTIMU *imu = RTIMU::createIMU(settings);
-    float pressure = 0.0;
+void initSensors() {
+    settings = new RTIMUSettings("RTIMULib");
+    imu = RTIMU::createIMU(settings);
+    pressure = RTPressure::createPressure(settings);
+    humidity = RTHumidity::createHumidity(settings);
 
     if ((imu == nullptr) || (imu->IMUType() == RTIMU_TYPE_NULL)) {
         std::cerr << "IMU not found" << std::endl;
-        return 1;
+    }
+    else {
+        imu->IMUInit();
+
+        if (pressure != NULL)
+            pressure->pressureInit();
+
+        if (humidity != NULL)
+            humidity->humidityInit();
+
+        printf("IMU initialized\n");
+    }
+}
+
+RTIMU_DATA readSensorData() {
+    RTIMU_DATA imuData;
+
+    while (imu->IMURead()) {
+        imuData = imu->getIMUData();
+
+        // add the pressure data to the structure
+        if (pressure != NULL)
+            pressure->pressureRead(imuData);
+
+        // add the humidity data to the structure
+        if (humidity != NULL)
+            humidity->humidityRead(imuData);
     }
 
-    imu->IMUInit();
-
-    while (true) {
-        if (imu->IMURead()) {
-            RTIMU_DATA imuData = imu->getIMUData();
-
-            std::cout << "Pressure: " << imuData.pressure << std::endl;
-        }
-        usleep(imu->IMUGetPollInterval() * 1000);
-    }
-    
-    delete imu;
-    delete settings;
-
-    return pressure;
+    return imuData;
 }
 
 json get_data_from_sensors(){
     // This funtion should collect data from the sesnors
     // These data are paced into json object, which is part of json payload
 
-    // TODO collect data from sensors
     json data;
-    data["temperature"] = 33;
-    data["humidity"] = 50;
-    data["air_pressure"] = readAirPressure();
+    RTIMU_DATA imuData = readSensorData();
+    data["temperature"] = imuData.temperature;
+    data["humidity"] = imuData.humidity;
+    data["air_pressure"] = imuData.pressure;
 
     return data;
 }
@@ -112,6 +130,7 @@ int main() {
     const char* topic = "weather_info";
 
     MyMqttClient mqtt_client("client_id", mqtt_host, mqtt_port);
+    initSensors();
 
     while (1) {
         const char* message = prepare_payload();
