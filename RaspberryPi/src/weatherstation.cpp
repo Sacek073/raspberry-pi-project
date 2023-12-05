@@ -14,6 +14,13 @@ RTIMU *imu = NULL;
 RTPressure *pressure = NULL;
 RTHumidity *humidity = NULL;
 
+/**
+* these two values are used for configuring
+* change them to match your requirements
+*/
+const char* MQTT_HOST = "172.21.64.214";
+const char* DEVICE_NAME = "RPI_Jan";
+
 class MyMqttClient : public mosqpp::mosquittopp {
 public:
     MyMqttClient(const char* id, const char* host, int port) : mosqpp::mosquittopp(id) {
@@ -110,7 +117,7 @@ const char* prepare_payload(){
     std::time_t current_time = std::time(nullptr);
     std::string time_str = std::ctime(&current_time);
     object["timestamp"] = time_str;
-    object["device"] = "RPI_Jan";
+    object["device"] = DEVICE_NAME;
     object["data"] = get_data_from_sensors();
 
     // Convert JSON to string
@@ -125,11 +132,10 @@ const char* prepare_payload(){
 
 int main() {
     // TODO probablyload from some config file
-    const char* mqtt_host = "172.21.64.213"; // MQTT broker ip
     int mqtt_port = 1883; // MQTT broker port
     const char* topic = "weather_info";
 
-    MyMqttClient mqtt_client("client_id", mqtt_host, mqtt_port);
+    MyMqttClient mqtt_client(DEVICE_NAME, MQTT_HOST, mqtt_port);
     initSensors();
 
     while (1) {
