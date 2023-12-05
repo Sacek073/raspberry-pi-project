@@ -8,8 +8,12 @@ import receiver
 from dateutil import parser
 
 def get_rpi_names():
-    with open("/app/data/data.json", "r") as f:
-        data = json.load(f)
+    try:
+        with open("/app/data/data.json", "r") as f:
+            data = json.load(f)
+    except:
+        with open("../data/data.json", "r") as f:
+            data = json.load(f)
         rpis = []
         for rpi in data["devices"]:
             rpis.append(rpi["name"])
@@ -67,8 +71,12 @@ def process_form(opt_arg=None):
     else:
         selected_device = opt_arg
     current_data = []
-    with open("/app/data/data.json", "r") as f:
-        data = json.load(f)
+    try:
+        with open("/app/data/data.json", "r") as f:
+            data = json.load(f)
+    except:
+        with open("../data/data.json", "r") as f:
+            data = json.load(f)
         for rpi in data["devices"]:
             if rpi["name"] == selected_device:
                 current_data = rpi["values"]

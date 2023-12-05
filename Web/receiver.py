@@ -155,8 +155,12 @@ class Config:
 
 def receive():
     print("Reciever running")
-    with open("/app/ip.txt", "r") as f:
-        ip = f.read().strip()
+    try:
+        with open("/app/ip.txt", "r") as f:
+            ip = f.read().strip()
+    except:
+        with open("./ip.txt", "r") as f:
+            ip = f.read().strip()
     config = Config(broker_ip=ip)
 
     downloader = Downloader(config.download_folder, config.json_file)
