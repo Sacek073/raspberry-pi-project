@@ -5,8 +5,14 @@
 #include <cstring>
 #include <nlohmann/json.hpp>
 #include <ctime>
+#include <RTIMULib.h>  // sensehat
 
 using json = nlohmann::json;
+
+RTIMUSettings *settings = NULL;
+RTIMU *imu = NULL;
+RTPressure *pressure = NULL;
+RTHumidity *humidity = NULL;
 
 class MyMqttClient : public mosqpp::mosquittopp {
 public:
@@ -43,15 +49,55 @@ public:
     }
 };
 
+void initSensors() {
+    settings = new RTIMUSettings("RTIMULib");
+    imu = RTIMU::createIMU(settings);
+    pressure = RTPressure::createPressure(settings);
+    humidity = RTHumidity::createHumidity(settings);
+
+    if ((imu == nullptr) || (imu->IMUType() == RTIMU_TYPE_NULL)) {
+        std::cerr << "IMU not found" << std::endl;
+    }
+    else {
+        imu->IMUInit();
+
+        if (pressure != NULL)
+            pressure->pressureInit();
+
+        if (humidity != NULL)
+            humidity->humidityInit();
+
+        printf("IMU initialized\n");
+    }
+}
+
+RTIMU_DATA readSensorData() {
+    RTIMU_DATA imuData;
+
+    while (imu->IMURead()) {
+        imuData = imu->getIMUData();
+
+        // add the pressure data to the structure
+        if (pressure != NULL)
+            pressure->pressureRead(imuData);
+
+        // add the humidity data to the structure
+        if (humidity != NULL)
+            humidity->humidityRead(imuData);
+    }
+
+    return imuData;
+}
+
 json get_data_from_sensors(){
     // This funtion should collect data from the sesnors
     // These data are paced into json object, which is part of json payload
 
-    // TODO collect data from sensors
     json data;
-    data["temperature"] = 33;
-    data["humidity"] = 50;
-    data["air_pressure"] = 40;
+    RTIMU_DATA imuData = readSensorData();
+    data["temperature"] = imuData.temperature;
+    data["humidity"] = imuData.humidity;
+    data["air_pressure"] = imuData.pressure;
 
     return data;
 }
@@ -75,6 +121,8 @@ const char* prepare_payload(){
     return message;
 }
 
+
+
 int main() {
     // TODO probablyload from some config file
     const char* mqtt_host = "172.21.64.213"; // MQTT broker ip
@@ -82,6 +130,7 @@ int main() {
     const char* topic = "weather_info";
 
     MyMqttClient mqtt_client("client_id", mqtt_host, mqtt_port);
+    initSensors();
 
     while (1) {
         const char* message = prepare_payload();

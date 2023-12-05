@@ -1,6 +1,6 @@
 all:
-	g++ -o mqtt_example test.cpp -lmosquittopp
+		g++ -o out/weatherstation src/weatherstation.cpp -I/include/RTIMULib/ -lmosquittopp -lRTIMULib
 run:
-	./mqtt_example
+		./out/weatherstation
 clean:
-	rm mqtt_example
+		rm /out/weatherstation

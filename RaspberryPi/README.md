@@ -6,6 +6,8 @@ sudo apt-get install libmosquitto-dev
 sudo apt-get install libmosquittopp-dev
 sudo apt-get install nlohmann-json3-dev
 ```
+* for SenseHat
+    activate the I2C interface in settings
 
 * for SenseHat Sample Program
 ```
@@ -22,9 +24,9 @@ dtoverlay=rpi-sense
 ```
 save and reboot RPi
 
+## used library
+* RTIMULib2
+    * used to communicate with the SenseHat over I2C
+
 ## Compilation
-`g++ -o sender sender.cpp -lmosquittopp`
-
-## To run the sender:
-Run `./sender` after compilation
-
+`g++ -o out/weatherstation src/weatherstation.cpp -I/include/RTIMULib/ -lmosquittopp -lRTIMULib`
