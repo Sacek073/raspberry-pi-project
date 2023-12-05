@@ -83,7 +83,7 @@ def process_form(opt_arg=None):
 
     temp_plot = prepare_plot(get_values(current_data, "temperature"), "Temperature (°C)")
     humidity_plot = prepare_plot(get_values(current_data, "humidity"), "Humidity (%)")
-    pressure_plot = prepare_plot(get_values(current_data, "air_pressure"), "Air pressure (Pa)")
+    pressure_plot = prepare_plot(get_values(current_data, "air_pressure"), "Air pressure (hPa)")
 
     return render_template('device.html',
                            device=selected_device,
