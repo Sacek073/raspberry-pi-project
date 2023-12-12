@@ -15,7 +15,7 @@ RTPressure *pressure = NULL;
 RTHumidity *humidity = NULL;
 
 /**
-* these two values are used for configuring
+* these two values are used for configuring the MQTT connection
 * change them to match your requirements
 */
 const char* MQTT_HOST = "172.21.64.214";
@@ -73,8 +73,6 @@ void initSensors() {
 
         if (humidity != NULL)
             humidity->humidityInit();
-
-        printf("IMU initialized\n");
     }
 }
 
@@ -97,11 +95,11 @@ RTIMU_DATA readSensorData() {
 }
 
 json get_data_from_sensors(){
-    // This funtion should collect data from the sesnors
-    // These data are paced into json object, which is part of json payload
-
+    // retrieve data from sensor
     json data;
     RTIMU_DATA imuData = readSensorData();
+
+    // place it inside json object
     data["temperature"] = imuData.temperature;
     data["humidity"] = imuData.humidity;
     data["air_pressure"] = imuData.pressure;
@@ -113,7 +111,6 @@ const char* prepare_payload(){
     // This function prepares the payload for message which will be sent
 
     json object;
-    // TODO fix getting name - figure out how - maybe IP adress??
     std::time_t current_time = std::time(nullptr);
     std::string time_str = std::ctime(&current_time);
     object["timestamp"] = time_str;
